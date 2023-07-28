@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+      "target": "es6", // El objetivo de compilación, puede ser "es5", "es6", "es2017", etc.
+      "module": "commonjs", // El sistema de módulos que utilizará TypeScript, en este caso, "commonjs" para Node.js.
+      "outDir": "./dist", // Directorio de salida donde se generará el código transpilado.
+      "rootDir": "./src", // Directorio de origen donde se encuentran los archivos TypeScript.
+      "strict": true, // Habilita todas las opciones estrictas de TypeScript.
+      "esModuleInterop": true // Permite el uso de módulos ES6 en un entorno CommonJS (como Node.js).
+    },
+    "include": ["src"] // Rutas de archivos TypeScript que se incluirán en la compilación. Ajusta esta ruta según tu estructura de carpetas.
+}
