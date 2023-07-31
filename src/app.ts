@@ -1,28 +1,25 @@
 import express from 'express';
+import serverless from 'serverless-http';
 import 'dotenv/config';
 import passport from 'passport';
 
-import BookingRouter from './src/routes/BookingRouter';
-import RoomRouter from './src/routes/RoomRouter';
-import LoginRouter from './src/controllers/login';
-import ContactRouter from './src/routes/ContactRouter';
-import UserRouter from './src/routes/UserRouter';
-import "./src/middleware/auth";
+import BookingRouter from './routes/BookingRouter';
+import RoomRouter from './routes/RoomRouter';
+import LoginRouter from './controllers/login';
+import ContactRouter from './routes/ContactRouter';
+import UserRouter from './routes/UserRouter';
+import "./middleware/auth";
 
 
 const app = express();
 
 app.use(express.json());
 
-
-
 // Configurar la ruta raíz
-app.get('/', (req, res) => {
+app.get('/info', (req, res) => {
   res.send('¡Hola! Bienvenido a MIRANDA.');
 });
 
-
-// texto para login
 
 app.use('/login', LoginRouter)
 
@@ -40,4 +37,6 @@ app.use('/login', LoginRouter)
 
 const port = 3000;
 export const server = app.listen(process.env.PORT, () => console.log(`Running on port ${process.env.PORT}`));
-export default app;
+export default server;
+
+export const handler = serverless(app);

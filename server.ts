@@ -1,14 +1,10 @@
-import express from 'express';
-import BookingRouter from './src/routes/BookingRoutes';
+// import express from 'express';
+// const app = express();
 
-const app = express();
+// // Your server setup here
 
-app.use(express.json());
+// const server = app.listen(3000, () => {
+//   console.log('Server is running on port 3000');
+// });
 
-// Configurar las rutas usando el enrutador BookingRouter
-app.use('/api/bookings', BookingRouter);
-
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Servidor iniciado en http://localhost:${port}`);
-});
+// export default server; // Export the server instance
