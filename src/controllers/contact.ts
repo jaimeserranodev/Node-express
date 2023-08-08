@@ -1,49 +1,65 @@
 import { Request, Response } from 'express';
-import contacts from '../data/contact';
+
 import { Contact, NewContact } from '../models/contact';
-import  toNewContact  from '../util/toNewContact';
+import { NewContactModel, ContactModel } from '../services/contact';
 
 
-const getContacts = (_: Request, res: Response) => {
+const getContacts = async (_: Request, res: Response) => {
     try {
-        return res.send(contacts.getAll());
-    } catch (err: any) {
-        return res.sendStatus(500);
-    }
-}
-
-const getContactById = (req: Request<{ id: string }, Contact>, res: Response) => {
-    try {
-        return res.send(contacts.getOne(req.params.id));
+        const contacts = await ContactModel.find().exec();
+        return res.status(200).json(contacts);
     } catch (err: any) {
         return res.status(err.status ?? 500).send(err.message);
     }
 }
 
-const createContact = (req: Request<{}, Contact, NewContact>, res: Response) => {
+const getContactById = async (req: Request<{ id: string }, Contact>, res: Response) => {
     try {
-        const newContact = toNewContact(req.body);
-        return res.status(201).send(contacts.create(newContact));
+        const contact = await ContactModel.findById(req.params.id).exec();
+        if (!contact) {
+            return res.status(404).json({ error: 'Contact not found' });
+        }
+        return res.status(200).json(contact);
     } catch (err: any) {
         return res.status(err.status ?? 500).send(err.message);
     }
 }
 
-const updateContact = (req: Request<{ id: string }, Contact, NewContact>, res: Response) => {
+const createContact = async (req: Request<{}, Contact, NewContact>, res: Response) => {
     try {
-        const validateContact = toNewContact(req.body);
-        return res.send(contacts.update({ id: req.params.id, ...validateContact }));
+        const newContact = new NewContactModel(req.body);
+        const savedContact = await newContact.save();
+        return res.status(201).json(savedContact);
     } catch (err: any) {
         return res.status(err.status ?? 500).send(err.message);
     }
 }
+
+
+const updateContact = async (req: Request<{ id: string }, Contact, NewContact>, res: Response) => {
+    try {
+        const updatedContact = await ContactModel.findByIdAndUpdate(req.params.id, req.body, { new: true }).exec();
+        if (!updatedContact) {
+            return res.status(404).json({ error: 'Contact not found' });
+        }
+        return res.status(200).json(updatedContact);
+    } catch (err: any) {
+        return res.status(err.status ?? 500).send(err.message);
+    }
+}
+
 
 const deleteContact = (req: Request<{ id: string }, string>, res: Response) => {
     try {
-        return res.send(contacts.delete(req.params.id));
+        const deletedContact = ContactModel.findByIdAndDelete(req.params.id).exec();
+        if (!deletedContact) {
+            return res.status(404).json({ error: 'Contact not found' });
+        }
+        return res.status(200).json(deletedContact);
     } catch (err: any) {
         return res.status(err.status ?? 500).send(err.message);
     }
 }
+
 
 export { getContacts, getContactById, createContact, updateContact, deleteContact }

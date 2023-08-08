@@ -1,5 +1,7 @@
 import { Router } from 'express';
-import { getBookings, getBookingById, createBooking, deleteBooking, updateBooking } from '../controllers/booking';
+import { getBookings, getBookingById, createBooking, deleteBooking, updateBooking} from "../services/booking"
+
+
 
 const BookingRouter = Router();
 

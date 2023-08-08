@@ -1,46 +1,64 @@
 import { Request, Response  }  from "express";
-import booking from "../data/booking";
 import { Booking, NewBooking } from "../models/bookings";
-import toNewBooking from '../util/toNewBooking';
+import { NewBookingModel } from "../services/booking";
+import { BookingModel } from "../services/booking";
 
-const getBookings = (req: Request, res: Response) => {
+const getBookings = async (req: Request, res: Response) => {
     try {
-        return res.status(200).json(booking.getAll());
+        const bookings = await BookingModel.find().exec();
+        return res.status(200).json(bookings);
     } catch (error) {
         return res.status(404).json({ error: (error as any).mensaje });
     };
 };
 
-const getBookingById = (req: Request <{id: string}, Booking>, res: Response) => {
+const getBookingById = async (req: Request <{id: string}, Booking>, res: Response) => {
     try{
-        return res.status(200).json(booking.getOne(parseInt(req.params.id)));
+        const booking = await BookingModel.findById(req.params.id).exec();
+        if (!booking) {
+            return res.status(404).json({ error: 'Booking not found' });
+        }
+        return res.status(200).json(booking);
+
+        } catch (error) {
+            return res.status(404).json({ error: (error as any).mensaje });
+        };
+    }
+
+const createBooking =  async (req: Request <{}, {}, NewBooking>, res: Response) => {
+    try{
+        const newBooking = new NewBookingModel(req.body);
+        const savedUser = await newBooking.save();
+        return res.status(201).json(savedUser);
     } catch (error) {
         return res.status(404).json({ error: (error as any).mensaje });
     };
     }
 
-const createBooking = (req: Request <{}, {}, NewBooking>, res: Response) => {
-    try{
-        return res.status(201).json(booking.create(req.body));
+const updateBooking = async (req: Request<{ id: string }, Booking, NewBooking>, res: Response) => {
+    try {
+        const updatedBooking = await BookingModel.findByIdAndUpdate(req.params.id, req.body, { new: true }).exec();
+        if (!updatedBooking) {
+            return res.status(404).json({ error: 'Booking not found' });
+        }
+        return res.status(200).json(updatedBooking);
     } catch (error) {
         return res.status(404).json({ error: (error as any).mensaje });
     };
     }
-const updateBooking = (req: Request<{ id: string }, Booking, NewBooking>, res: Response) => {
-    try {
-        const validateBooking = toNewBooking(req.body);
-        return res.send(booking.update({ id: Number(req.params.id), ...validateBooking }));
-    } catch (err: any) {
-        return res.status(err.status ?? 500).send(err.message);
-    }
-    }
+
     
-    const deleteBooking = (req: Request<{ id: string }, string>, res: Response) => {
+    const deleteBooking = async (req: Request<{ id: string }, string>, res: Response) => {
     try {
-        return res.send(booking.delete(Number(req.params.id)));
-    } catch (err: any) {
-        return res.status(err.status ?? 500).send(err.message);
+        const deletedBooking = await BookingModel.findByIdAndDelete(req.params.id).exec();
+        if (!deletedBooking) {
+            return res.status(404).json({ error: 'Booking not found' });
+        }
+        return res.status(200).json(deletedBooking);
+    } catch (error) {
+        return res.status(404).json({ error: (error as any).mensaje });
+    };
     }
-    }
+
 
     export { getBookings, getBookingById, createBooking, updateBooking, deleteBooking }

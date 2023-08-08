@@ -4,7 +4,7 @@ export interface Room {
     bed_type: string | undefined;
     photo: string | undefined;
     description?: string | undefined;
-    amenities: string[];
+    amenities: string;
     rate: number;
     offer: number;
     status: string;

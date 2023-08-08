@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { FakeContact } from "../data/seed";
 import { getContacts, getContactById, createContact, updateContact, deleteContact } from "../controllers/contact";
 
 const ContactRouter = Router();
